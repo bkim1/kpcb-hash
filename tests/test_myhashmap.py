@@ -1,7 +1,34 @@
 import unittest
+import time
 from src.MyHashMap import MyHashMap
 
 class TestHashMap(unittest.TestCase):
+    def test_speed(self):
+        t0 = time.time()
+        hmap = MyHashMap(size=50)
+
+        for i in range(40):
+            hmap.set("t" + str(i), i)
+
+        hmap.get("t2")
+        hmap.get("t3")
+        t1 = time.time()
+
+        pydict = {}
+        
+        for i in range(40):
+            pydict["t" + str(i)] = i
+        
+        pydict.get("t2")
+        pydict.get("t3")
+        t2 = time.time()
+
+        print(hmap._buckets)
+        print(pydict)
+        print("MyHashMap: %f" % (t1 - t0))
+        print("Dictionary: %f" % (t2 - t1))
+
+
     def test_get(self):
         hmap = MyHashMap()
 
@@ -41,6 +68,12 @@ class TestHashMap(unittest.TestCase):
 
         self.assertFalse(hmap.set(10, 10))    
 
+    def test_set_4(self):
+        hmap = MyHashMap()
+
+        hmap.set(None, 10)
+        self.assertFalse(hmap._buckets[0].is_empty())
+
     def test_delete(self):
         hmap = MyHashMap()
 
@@ -58,7 +91,22 @@ class TestHashMap(unittest.TestCase):
         hmap.delete("t2")
         self.assertEqual(len(hmap), 7)
 
+    def test_delete_3(self):
+        hmap = MyHashMap()
 
+        with self.assertRaises(ValueError):
+            hmap.delete(10)
+
+    def test_delete_4(self):
+        hmap = MyHashMap()
+
+        self.assertIsNone(hmap.delete("test"))
+
+    def test_load(self):
+        hmap = MyHashMap()
+
+        hmap.set("test", 10)
+        self.assertEqual(hmap.load(), 0.1)
 
 if __name__ == "__main__":
     unittest.main()

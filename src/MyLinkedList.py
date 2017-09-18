@@ -116,7 +116,7 @@ class LList:
 
 class MyNode:
     def __init__(self, k, v, n):
-        if not isinstance(k, str):
+        if not isinstance(k, str) and k is not None:
             raise ValueError("Expected: str Got: %s" % str(type(k)))
         elif n is not None and not isinstance(n, MyNode):
             raise ValueError("Expected: MyNode obj Got: %s" % str(type(n)))

@@ -33,10 +33,6 @@ class MyHashMap:
                 raise MemoryError("HashMap has reached max size. " \
                                 + "Delete an item to make room.")
             bucket = self._buckets[index]
-            if bucket.is_empty():
-                bucket.add(key, value)
-                self._num_elements += 1
-                return True
         
             for node in bucket:
                 if node.key == key:
@@ -75,7 +71,7 @@ class MyHashMap:
             raise
         else:
             bucket = self._buckets[index]
-            if bucket is None:
+            if bucket.is_empty():
                 return None
 
             try:
