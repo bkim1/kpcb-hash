@@ -2,21 +2,21 @@
 * HashMap implementation for KPCB Engineering Fellows Program
 * Uses 
 """
-from MyLinkedList import LList, MyNode
+from src.MyLinkedList import LList, MyNode
 
 
 class MyHashMap:
-    def __init__(self, size=100):
+    def __init__(self, size=10):
         """
         * Initializes new HashMap with a fixed size
         """
         # Initialize Instance Variables
-        num_elements = 0
-        buckets = [LList(None)] * size
-        max_size = size
+        self._num_elements = 0
+        self._buckets = [LList() for i in range(size)]
+        self._max_size = size
 
     def __len__(self):
-        return self.num_elements
+        return self._num_elements
 
     def set(self, key, value):
         """
@@ -29,19 +29,23 @@ class MyHashMap:
         except ValueError:
             return False
         else:
-            if self.num_elements == self.max_size:
-                # raise some error for maxed out HashMap
-                pass
-            bucket = self.buckets[index]
+            if self._num_elements == self._max_size:
+                raise MemoryError("HashMap has reached max size. " \
+                                + "Delete an item to make room.")
+            bucket = self._buckets[index]
+            if bucket.is_empty():
+                bucket.add(key, value)
+                self._num_elements += 1
+                return True
         
-        for node in bucket:
-            if node.key == key:
-                node.value = value
-                return True
-            elif node.next_node is None:
-                node.next_node = MyNode(key, value, None)
-                self.num_elements += 1
-                return True
+            for node in bucket:
+                if node.key == key:
+                    node.value = value
+                    return True
+            
+            bucket.add(key, value)
+            self._num_elements += 1
+            return True
 
     def get(self, key):
         """
@@ -54,10 +58,10 @@ class MyHashMap:
         except ValueError:
             raise
         else:
-            for node in self.buckets[index]:
+            for node in self._buckets[index]:
                 if node.key == key:
                     return node.value
-            return None
+            raise KeyError("Key not found")
 
     def delete(self, key):
         """
@@ -70,10 +74,17 @@ class MyHashMap:
         except ValueError:
             raise
         else:
-            bucket = self.buckets[index]
+            bucket = self._buckets[index]
             if bucket is None:
                 return None
-            return bucket.delete(key)
+
+            try:
+                value = bucket.delete(key)
+            except KeyError:
+                raise
+            else:
+                self._num_elements -= 1
+                return value
 
     def load(self):
         """
@@ -81,7 +92,7 @@ class MyHashMap:
 
         :return float: Returns load factor of current HashMap
         """
-        return self.num_elements / self.max_size
+        return self._num_elements / self._max_size
     
     def get_index(self, key):
         """
@@ -94,6 +105,6 @@ class MyHashMap:
         if key is None:
             return 0
         elif isinstance(key, str):
-            return hash(key) % self.max_size
+            return hash(key) % (self._max_size - 1)
         
         raise ValueError("Expected: str Got: %s instead" % str(type(key)))

@@ -9,34 +9,46 @@ class LList:
         """
         if not isinstance(node, MyNode) and node is not None:
             raise ValueError("Expected: MyNode obj Got: %s" % str(type(node)))
+        
         self._head = node
         self._current = self.head
         self._tail = self.head
+        if node is None:
+            self._num_elements = 0
+        else:
+            self._num_elements = 1
 
     def add(self, key, value):
         if self.head is None:
             self.head = MyNode(key, value, None)
             self.current = self.head
-            self.tail = self.head
-            return True
-
-        self.tail.next_node = MyNode(key, value, None)
-        self.tail = self.tail.next_node
+            self.tail = self.head 
+        else:
+            self.tail.next_node = MyNode(key, value, None)
+            self.tail = self.tail.next_node
+        
+        self._num_elements += 1
         return True
 
     def delete(self, key):
         curr = self.head
         prev = self.head
         while curr is not None:
-            if curr.key == node.key:
+            if curr.key == key:
                 if curr == self.head:
                     self.head = None
                 else:
                     prev.next_node = curr.next_node
+
+                self._num_elements -= 1
                 return curr.value
             prev = curr
             curr = curr.next_node
-        return None
+        
+        raise KeyError("Key not found within list")
+
+    def is_empty(self):
+        return self.head is None
 
     @property
     def head(self):
@@ -48,6 +60,31 @@ class LList:
             raise ValueError("Expected: MyNode obj Got: %s" % str(type(node)))
         
         self._head = node
+    
+    @property
+    def tail(self):
+        return self._tail
+
+    @tail.setter
+    def tail(self, node):
+        if not isinstance(node, MyNode) and node is not None:
+            raise ValueError("Expected: MyNode obj Got: %s" % str(type(node)))
+        
+        self._tail = node
+    
+    @property
+    def current(self):
+        return self._current
+
+    @current.setter
+    def current(self, node):
+        if not isinstance(node, MyNode) and node is not None:
+            raise ValueError("Expected: MyNode obj Got: %s" % str(type(node)))
+        
+        self._current = node
+
+    def __len__(self):
+        return self._num_elements
 
     def __iter__(self):
         return self
@@ -60,6 +97,22 @@ class LList:
         else:
             self.current = node.next_node
         return node
+
+    def __repr__(self):
+        if self.is_empty():
+            return "[]"
+        items = "["
+        node = self.head
+        while node is not None:
+            if node.next_node is None:
+                items += str(node) + "]"
+            else:
+                items += str(node) + ", "
+            
+            node = node.next_node
+
+        return items
+
 
 class MyNode:
     def __init__(self, k, v, n):
@@ -103,21 +156,18 @@ class MyNode:
             raise ValueError("Expected: MyNode obj Got: %s" % str(type(n)))
 
     def __eq__(self, other):
-        return self.key == other.key and \
-               self.value == other.value and \
-               self.next_node == other.next_node
+        if self.next_node is None and other.next_node is None:
+            return self.key == other.key and \
+                   self.value == other.value
+        elif self.next_node is None or other.next_node is None:
+            return False
+        else:
+            return self.key == other.key and \
+                   self.value == other.value and \
+                   self.next_node == other.next_node
     
     def __ne__(self, other):
         return not self == other
 
-
-if __name__ == '__main__':
-    llist = LList()
-    i = 0
-    for ch in 'abcde':
-        llist.add(ch, i)
-        i += 1
-
-    for node in llist:
-        print("Key: %s Value: %s" % (node.key, str(node.value)))
-    
+    def __repr__(self):
+        return "'%s': %s" % (self.key, self.value)
