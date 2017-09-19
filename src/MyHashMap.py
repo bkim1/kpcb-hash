@@ -2,17 +2,18 @@
 * HashMap implementation for KPCB Engineering Fellows Program
 * Uses 
 """
-from src.MyLinkedList import LList, MyNode
+# from src.MyLinkedList import LList, MyNode
 
 
 class MyHashMap:
-    def __init__(self, size=10):
+    def __init__(self, size=11):
         """
         * Initializes new HashMap with a fixed size
         """
         # Initialize Instance Variables
         self._num_elements = 0
-        self._buckets = [LList() for i in range(size)]
+        self._keys = ["" for i in range(size)]
+        self._data = [None for i in range(size)]
         self._max_size = size
 
     def __len__(self):
@@ -29,19 +30,34 @@ class MyHashMap:
         except ValueError:
             return False
         else:
-            if self._num_elements == self._max_size:
-                raise MemoryError("HashMap has reached max size. " \
-                                + "Delete an item to make room.")
-            bucket = self._buckets[index]
-        
-            for node in bucket:
-                if node.key == key:
-                    node.value = value
-                    return True
+            if index == 0 and self._keys[0] is None:
+                self._data[0] = value
+                return true
+
+            elif self._keys[index] == "":
+                self._keys[index] = key
+                self._data[index] = value
+                self._num_elements += 1
+                return True
             
-            bucket.add(key, value)
-            self._num_elements += 1
-            return True
+            else:
+                if self._keys[index] == key:
+                    self._data[index] = value
+                    return True
+                
+                # ----- Collision has occurred ----- #
+                index = self.find_space(key)
+                if index == -1:
+                    raise MemoryError("HashMap is full")
+                elif self._keys[index] == key:
+                    self._data[index] = value
+                    return True
+                else:
+                    self._keys[index] = key
+                    self._data[index] = value
+                    self._num_elements += 1
+                    return True
+                    
 
     def get(self, key):
         """
@@ -54,10 +70,18 @@ class MyHashMap:
         except ValueError:
             raise
         else:
-            for node in self._buckets[index]:
-                if node.key == key:
-                    return node.value
-            raise KeyError("Key not found")
+            # Check for None 'key'
+            if index == 0 and self._keys[0] is None:
+                return self._data[0]
+            
+            # ----- Collision has occurred ----- #
+            if self._keys[index] == "" or self._keys[index] != key:
+                # Find new index using quadratic probing
+                index = self.quad_search(key)
+                if index == -1:
+                    raise KeyError("Key not found")
+
+            return self._data[index]
 
     def delete(self, key):
         """
@@ -70,17 +94,20 @@ class MyHashMap:
         except ValueError:
             raise
         else:
-            bucket = self._buckets[index]
-            if bucket.is_empty():
-                return None
+            # ------ Collision has occurred ------ #
+            if self._keys[index] is not None and \
+               (self._keys[index] == "" or \
+               self._keys[index] != key):
+                # Find new index using quadratic probing
+                index = self.quad_search(key)
+                if index == -1:
+                    raise KeyError("Key not found")
 
-            try:
-                value = bucket.delete(key)
-            except KeyError:
-                raise
-            else:
-                self._num_elements -= 1
-                return value
+            data = self._data[index]
+            self._keys[index] = ""
+            self._data[index] = None
+            self._num_elements -= 1
+            return data
 
     def load(self):
         """
@@ -90,7 +117,7 @@ class MyHashMap:
         """
         return self._num_elements / self._max_size
     
-    def get_index(self, key):
+    def get_index(self, key, quad=0):
         """
         * Helper method to get correct index for bucket
         * Uses python's default hash for strings 
@@ -101,6 +128,23 @@ class MyHashMap:
         if key is None:
             return 0
         elif isinstance(key, str):
-            return hash(key) % (self._max_size - 1)
+            return (hash(key) + quad*quad) % self._max_size
         
         raise ValueError("Expected: str Got: %s instead" % str(type(key)))
+
+    def find_space(self, key):
+        for i in range(self._max_size):
+            index = self.get_index(key, i)
+            print(index)
+
+            if self._keys[index] == "" or self._keys[index] == key:
+                return index
+        return -1
+
+    def quad_search(self, key):
+        for i in range(self._max_size):
+            index = self.get_index(key, i)
+
+            if self._keys[index] != "" and self._keys[index] == key:
+                return index
+        return -1

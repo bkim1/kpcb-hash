@@ -5,7 +5,7 @@ from src.MyHashMap import MyHashMap
 class TestHashMap(unittest.TestCase):
     def test_speed(self):
         t0 = time.time()
-        hmap = MyHashMap(size=50)
+        hmap = MyHashMap(size=100)
 
         for i in range(40):
             hmap.set("t" + str(i), i)
@@ -23,8 +23,9 @@ class TestHashMap(unittest.TestCase):
         pydict.get("t3")
         t2 = time.time()
 
-        print(hmap._buckets)
-        print(pydict)
+        # print(hmap._keys)
+        # print(pydict)
+        # print(len(hmap))
         print("MyHashMap: %f" % (t1 - t0))
         print("Dictionary: %f" % (t2 - t1))
 
@@ -60,7 +61,7 @@ class TestHashMap(unittest.TestCase):
         hmap = MyHashMap()
 
         with self.assertRaises(MemoryError):
-            for i in range(11):
+            for i in range(12):
                 hmap.set("t" + str(i), i)
     
     def test_set_3(self):
@@ -72,13 +73,14 @@ class TestHashMap(unittest.TestCase):
         hmap = MyHashMap()
 
         hmap.set(None, 10)
-        self.assertFalse(hmap._buckets[0].is_empty())
+        self.assertIsNotNone(hmap._data[0])
 
     def test_delete(self):
         hmap = MyHashMap()
 
         for i in range(8):
             hmap.set("t" + str(i), i)
+            print(hmap._keys)
         
         self.assertEqual(hmap.delete("t2"), 2)
 
@@ -100,13 +102,14 @@ class TestHashMap(unittest.TestCase):
     def test_delete_4(self):
         hmap = MyHashMap()
 
-        self.assertIsNone(hmap.delete("test"))
+        with self.assertRaises(KeyError):
+            hmap.delete("test")
 
     def test_load(self):
         hmap = MyHashMap()
 
         hmap.set("test", 10)
-        self.assertEqual(hmap.load(), 0.1)
+        self.assertEqual(hmap.load(), (1 / 11))
 
 if __name__ == "__main__":
     unittest.main()
