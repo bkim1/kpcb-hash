@@ -23,9 +23,6 @@ class TestHashMap(unittest.TestCase):
         pydict.get("t3")
         t2 = time.time()
 
-        # print(hmap._keys)
-        # print(pydict)
-        # print(len(hmap))
         print("MyHashMap: %f" % (t1 - t0))
         print("Dictionary: %f" % (t2 - t1))
 
@@ -61,7 +58,7 @@ class TestHashMap(unittest.TestCase):
         hmap = MyHashMap()
 
         with self.assertRaises(MemoryError):
-            for i in range(12):
+            for i in range(16):
                 hmap.set("t" + str(i), i)
     
     def test_set_3(self):
@@ -80,7 +77,6 @@ class TestHashMap(unittest.TestCase):
 
         for i in range(8):
             hmap.set("t" + str(i), i)
-            print(hmap._keys)
         
         self.assertEqual(hmap.delete("t2"), 2)
 
@@ -109,7 +105,7 @@ class TestHashMap(unittest.TestCase):
         hmap = MyHashMap()
 
         hmap.set("test", 10)
-        self.assertEqual(hmap.load(), (1 / 11))
+        self.assertEqual(hmap.load(), (1 / hmap._max_size))
 
 if __name__ == "__main__":
     unittest.main()

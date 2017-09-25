@@ -2,7 +2,6 @@
 * HashMap implementation for KPCB Engineering Fellows Program
 * Uses 
 """
-# from src.MyLinkedList import LList, MyNode
 
 
 class MyHashMap:
@@ -12,12 +11,36 @@ class MyHashMap:
         """
         # Initialize Instance Variables
         self._num_elements = 0
+        # Adjust fixed size for better load balance at max
+        # Try to reach "max" size at 0.75 load factor
+        size = int(size * 1.25)
         self._keys = ["" for i in range(size)]
         self._data = [None for i in range(size)]
         self._max_size = size
 
     def __len__(self):
         return self._num_elements
+
+    def __repr__(self):
+        rep = "{"
+        if self._keys[0] is None and self._data[0] is not None:
+            rep += " : " + self._data[0]
+        elif self._keys[0] is None and self._data[0] is None:
+            rep += " : "
+        elif self._keys is not None:
+            rep += self._keys[0] + ": "
+        else:
+            rep += self._keys[0] + ": " + self._data[0]
+
+        for key, value in zip(self._keys, self._data):
+            if value is None:
+                rep += ", %s: " % key
+            else:
+                rep += ", %s: %s" % (key, value)
+
+        rep += "}"
+        return rep
+
 
     def set(self, key, value):
         """
@@ -77,7 +100,7 @@ class MyHashMap:
             # ----- Collision has occurred ----- #
             if self._keys[index] == "" or self._keys[index] != key:
                 # Find new index using quadratic probing
-                index = self.quad_search(key)
+                index = self.open_addr(key)
                 if index == -1:
                     raise KeyError("Key not found")
 
@@ -99,7 +122,7 @@ class MyHashMap:
                (self._keys[index] == "" or \
                self._keys[index] != key):
                 # Find new index using quadratic probing
-                index = self.quad_search(key)
+                index = self.open_addr(key)
                 if index == -1:
                     raise KeyError("Key not found")
 
@@ -117,7 +140,7 @@ class MyHashMap:
         """
         return self._num_elements / self._max_size
     
-    def get_index(self, key, quad=0):
+    def get_index(self, key, extra=0):
         """
         * Helper method to get correct index for bucket
         * Uses python's default hash for strings 
@@ -128,20 +151,19 @@ class MyHashMap:
         if key is None:
             return 0
         elif isinstance(key, str):
-            return (hash(key) + quad*quad) % self._max_size
+            return (hash(key) + extra) % self._max_size
         
         raise ValueError("Expected: str Got: %s instead" % str(type(key)))
 
     def find_space(self, key):
         for i in range(self._max_size):
             index = self.get_index(key, i)
-            print(index)
 
             if self._keys[index] == "" or self._keys[index] == key:
                 return index
         return -1
 
-    def quad_search(self, key):
+    def open_addr(self, key):
         for i in range(self._max_size):
             index = self.get_index(key, i)
 
