@@ -4,9 +4,9 @@ from src.MyHashMap import MyHashMap
 
 class TestHashMap(unittest.TestCase):
     def test_speed(self):
-        t0 = time.time()
+        
         hmap = MyHashMap(size=50)
-
+        t0 = time.time()
         for i in range(40):
             hmap.set("t" + str(i), i)
 
@@ -15,18 +15,18 @@ class TestHashMap(unittest.TestCase):
         t1 = time.time()
 
         pydict = {}
-        
+        t2 = time.time()
         for i in range(40):
             pydict["t" + str(i)] = i
         
         pydict.get("t2")
         pydict.get("t3")
-        t2 = time.time()
+        t3 = time.time()
 
         print(hmap._buckets)
         print(pydict)
         print("MyHashMap: %f" % (t1 - t0))
-        print("Dictionary: %f" % (t2 - t1))
+        print("Dictionary: %f" % (t3 - t2))
 
 
     def test_get(self):
