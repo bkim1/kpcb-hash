@@ -33,14 +33,17 @@ class MyHashMap:
         except ValueError:
             return False
         else:
+            # None key already exists
             if index == 0 and self._keys[0] is None:
                 self._data[0] = value
                 return True
-
+            
+            # Key @ index 0 already taken --> Can't add None key
             elif index == 0 and self._keys[0] is not None \
                             and self._keys[0] != "" and key is None:
                 return False
-
+            
+            # Key @ index is empty --> Set new Key:Value pair
             elif self._keys[index] == "":
                 self._keys[index] = key
                 self._data[index] = value
@@ -48,6 +51,7 @@ class MyHashMap:
                 return True
             
             else:
+                # Replace old value with new value
                 if self._keys[index] == key:
                     self._data[index] = value
                     return True
@@ -56,9 +60,11 @@ class MyHashMap:
                 index = self.find_space(key)
                 if index == -1:
                     raise MemoryError("HashMap is full")
+
                 elif self._keys[index] == key:
                     self._data[index] = value
                     return True
+
                 else:
                     self._keys[index] = key
                     self._data[index] = value
@@ -112,6 +118,7 @@ class MyHashMap:
                 if index == -1:
                     raise KeyError("Key not found")
 
+            # Reset the key and value @ the index
             data = self._data[index]
             self._keys[index] = ""
             self._data[index] = None
@@ -173,9 +180,11 @@ class MyHashMap:
         return -1
 
     def __len__(self):
+        """Returns number of elements in HashMap"""
         return self._num_elements
 
     def __repr__(self):
+        """Returns the string representation of the HashMap"""
         rep = "{"
         if self._keys[0] is None and self._data[0] is not None:
             rep += " : %s" % self._data[0]
