@@ -2,15 +2,15 @@ HashMap implementation for KPCB Engineering Fellows Program
 
 Written using Python v3.6.2
 
-# Dependencies needed to run:
+## Dependencies needed to run:
 * Python v3.6
 
-# How to run unit tests:
+## How to run unit tests:
 1. Open terminal to root directory 
 2. Run `python3 -m tests.test_myhashmap`
 
 
-Methods Required:
+## HashMap Methods:
 
 * constructor(size): return an instance of the class with pre-allocated space for the given number of objects.
 * boolean set(key, value): stores the given key/value pair in the hash map. Returns a boolean value indicating success / failure of the operation.
