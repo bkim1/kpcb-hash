@@ -18,30 +18,6 @@ class MyHashMap:
         self._data = [None for i in range(size)]
         self._max_size = size
 
-    def __len__(self):
-        return self._num_elements
-
-    def __repr__(self):
-        rep = "{"
-        if self._keys[0] is None and self._data[0] is not None:
-            rep += " : " + self._data[0]
-        elif self._keys[0] is None and self._data[0] is None:
-            rep += " : "
-        elif self._keys is not None:
-            rep += self._keys[0] + ": "
-        else:
-            rep += self._keys[0] + ": " + self._data[0]
-
-        for key, value in zip(self._keys, self._data):
-            if value is None:
-                rep += ", %s: " % key
-            else:
-                rep += ", %s: %s" % (key, value)
-
-        rep += "}"
-        return rep
-
-
     def set(self, key, value):
         """
         * Stores given key:value pair in HashMap  
@@ -55,7 +31,11 @@ class MyHashMap:
         else:
             if index == 0 and self._keys[0] is None:
                 self._data[0] = value
-                return true
+                return True
+
+            elif index == 0 and self._keys[0] is not None \
+                            and self._keys[0] != "" and key is None:
+                return False
 
             elif self._keys[index] == "":
                 self._keys[index] = key
@@ -99,8 +79,8 @@ class MyHashMap:
             
             # ----- Collision has occurred ----- #
             if self._keys[index] == "" or self._keys[index] != key:
-                # Find new index using quadratic probing
-                index = self.open_addr(key)
+                # Find new index using linear probing
+                index = self.find_key(key)
                 if index == -1:
                     raise KeyError("Key not found")
 
@@ -121,8 +101,8 @@ class MyHashMap:
             if self._keys[index] is not None and \
                (self._keys[index] == "" or \
                self._keys[index] != key):
-                # Find new index using quadratic probing
-                index = self.open_addr(key)
+                # Find new index using linear probing
+                index = self.find_key(key)
                 if index == -1:
                     raise KeyError("Key not found")
 
@@ -140,10 +120,11 @@ class MyHashMap:
         """
         return self._num_elements / self._max_size
     
-    def get_index(self, key, extra=0):
+    def get_index(self, key, add=0):
         """
         * Helper method to get correct index for bucket
         * Uses python's default hash for strings 
+        * Uses linear probing to find an open spot if collision occurs
 
         :param key: Key for HashMap 
         :return int: Returns index for bucket according to key and max_size
@@ -151,11 +132,18 @@ class MyHashMap:
         if key is None:
             return 0
         elif isinstance(key, str):
-            return (hash(key) + extra) % self._max_size
+            return (hash(key) + add) % self._max_size
         
         raise ValueError("Expected: str Got: %s instead" % str(type(key)))
 
     def find_space(self, key):
+        """
+        * Helper method to find a new open space 
+        * Calls get_index() method until an open space is found
+
+        :param key: Key used to determine index in HashMap
+        :return: Returns the index of an open spot or -1 if HashMap is full
+        """
         for i in range(self._max_size):
             index = self.get_index(key, i)
 
@@ -163,10 +151,40 @@ class MyHashMap:
                 return index
         return -1
 
-    def open_addr(self, key):
+    def find_key(self, key):
+        """
+        * Helper method to find a key in HashMap if collision has occurred 
+        * Calls get_index() method until the key is found
+
+        :param key: Key used to determine index in HashMap
+        :return: Returns the index of the key or -1 if not found
+        """
         for i in range(self._max_size):
             index = self.get_index(key, i)
 
-            if self._keys[index] != "" and self._keys[index] == key:
+            if self._keys[index] == key:
                 return index
         return -1
+
+    def __len__(self):
+        return self._num_elements
+
+    def __repr__(self):
+        rep = "{"
+        if self._keys[0] is None and self._data[0] is not None:
+            rep += " : %s" % self._data[0]
+        elif self._keys[0] is None and self._data[0] is None:
+            rep += " : "
+        elif self._keys is not None:
+            rep += self._keys[0] + ": "
+        else:
+            rep += self._keys[0] + ": %s" % self._data[0]
+
+        for key, value in zip(self._keys, self._data):
+            if value is None:
+                rep += ", %s: " % key
+            else:
+                rep += ", %s: %s" % (key, value)
+
+        rep += "}"
+        return rep

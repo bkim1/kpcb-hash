@@ -23,7 +23,7 @@ class TestHashMap(unittest.TestCase):
         pydict.get("t3")
         t2 = time.time()
 
-        print("MyHashMap: %f" % (t1 - t0))
+        print("\nMyHashMap: %f" % (t1 - t0))
         print("Dictionary: %f" % (t2 - t1))
 
 
@@ -48,6 +48,29 @@ class TestHashMap(unittest.TestCase):
         with self.assertRaises(ValueError):
             hmap.get(10)
 
+    def test_get_4(self):
+        hmap = MyHashMap()
+
+        with self.assertRaises(KeyError):
+            hmap.get(None)
+    
+    def test_get_5(self):
+        hmap = MyHashMap()
+
+        hmap.set(None, 10)
+
+        self.assertEqual(hmap.get(None), 10)
+
+    def test_get_6(self):
+        hmap = MyHashMap(5)
+
+        for i in range(5):
+            hmap.set("t" + str(i), i)
+
+        for i in range(5):
+            hmap.get("t" + str(i))
+        self.assertTrue(True)
+
     def test_set(self):
         hmap = MyHashMap()
         hmap.set("test", 10)
@@ -71,6 +94,23 @@ class TestHashMap(unittest.TestCase):
 
         hmap.set(None, 10)
         self.assertIsNotNone(hmap._data[0])
+
+    def test_set_5(self):
+        hmap = MyHashMap(5)
+
+        for i in range(5):
+            hmap.set("t" + str(i), i)
+
+        self.assertTrue(True)
+
+    def test_set_6(self):
+        hmap = MyHashMap()
+
+        for i in range(5):
+            hmap.set("t" + str(i), i)
+        
+        hmap.set(None, 10)
+
 
     def test_delete(self):
         hmap = MyHashMap()
@@ -101,11 +141,38 @@ class TestHashMap(unittest.TestCase):
         with self.assertRaises(KeyError):
             hmap.delete("test")
 
+    def test_delete_5(self):
+        hmap = MyHashMap(size=10)
+
+        for i in range(5):
+            hmap.set("t" + str(i), i)
+
+        for i in range(5):
+            hmap.delete("t" + str(i))
+        self.assertTrue(True)
+
     def test_load(self):
         hmap = MyHashMap()
 
         hmap.set("test", 10)
         self.assertEqual(hmap.load(), (1 / hmap._max_size))
+
+    def test_len(self):
+        hmap = MyHashMap()
+
+        for i in range(5):
+            hmap.set("t" + str(i), i)
+        
+        self.assertEqual(len(hmap), 5)
+
+    def test_repr(self):
+        hmap = MyHashMap()
+
+        for i in range(5):
+            hmap.set("t" + str(i), i)
+        
+        rep = str(hmap)
+        self.assertTrue(True)
 
 if __name__ == "__main__":
     unittest.main()

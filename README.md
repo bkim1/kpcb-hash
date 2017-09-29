@@ -2,6 +2,13 @@ HashMap implementation for KPCB Engineering Fellows Program
 
 Written using Python v3.6.2
 
+# Dependencies needed to run:
+* Python v3.6
+
+# How to run unit tests:
+1. Open terminal to root directory 
+2. Run `python3 -m tests.test_myhashmap`
+
 
 Methods Required:
 
