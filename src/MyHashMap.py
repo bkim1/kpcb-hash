@@ -8,12 +8,14 @@ class MyHashMap:
     def __init__(self, size=11):
         """
         * Initializes new HashMap with a fixed size
+
+        :param size: Optional parameter to set the max size of the HashMap
         """
         # Initialize Instance Variables
         self._num_elements = 0
         # Adjust fixed size for better load balance at max
         # Try to reach "max" size at 0.75 load factor
-        size = int(size * 1.25)
+        size = int(size * 1.25) + 1
         self._keys = ["" for i in range(size)]
         self._data = [None for i in range(size)]
         self._max_size = size
@@ -22,6 +24,8 @@ class MyHashMap:
         """
         * Stores given key:value pair in HashMap  
 
+        :param key: Key to use
+        :param value: Value to associate with given key
         :return bool: Returns success/failure of key:value being set
         """
         try:
@@ -66,6 +70,7 @@ class MyHashMap:
         """
         * Gets value found at given key
 
+        :param key: Key to get value from
         :return value: Returns value found at key 
         """
         try:
@@ -90,6 +95,7 @@ class MyHashMap:
         """
         * Deletes value found at given key
 
+        :param key: Key to delete from HashMap
         :return value: Returns value if successfully deleted
         """
         try:

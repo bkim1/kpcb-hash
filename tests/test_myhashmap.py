@@ -14,18 +14,7 @@ class TestHashMap(unittest.TestCase):
         hmap.get("t3")
         t1 = time.time()
 
-        pydict = {}
-        
-        for i in range(40):
-            pydict["t" + str(i)] = i
-        
-        pydict.get("t2")
-        pydict.get("t3")
-        t2 = time.time()
-
         print("\nMyHashMap: %f" % (t1 - t0))
-        print("Dictionary: %f" % (t2 - t1))
-
 
     def test_get(self):
         hmap = MyHashMap()
